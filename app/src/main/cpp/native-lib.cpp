@@ -24,14 +24,14 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftcppnative(J
    int D=0;
    int r_far1;
    int r_near1;
-   float summationD=0;
-   float normalD = 0;
+   double summationD=0;
+   double normalD = 0;
    int E=0;
    int F=0;
    int B=0;
    int G=0;
    int R=0;
-   float summation=0;
+   double summation=0;
    float sigma_one=0;
    jfloat factor=0;
     jfloat fact = 0;
@@ -68,7 +68,7 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftcppnative(J
 
                 factor = (a_1-fact)*(1/(a_1-a_0));
 
-                sigma_one = sigma_far*factor/*((a1-j)/(a1-a0))*/;
+                sigma_one = sigma_far*factor;
                 r_far1 = (int)ceil(2*sigma_one);
                     for (int k = -r_far1; k < r_far1 + 1; k++) {
                         summation += ((exp(-((k * k) / (2 * sigma_one * sigma_one)))) *
@@ -95,7 +95,7 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftcppnative(J
                 a_2 = (jfloat)a2;
                 a_3 = (jfloat)a3;
                 factor = (fact-a_2)*(1/(a_3-a_2));
-                sigma_one = sigma_near*factor/*((j-a2)/(a3-a2))*/;
+                sigma_one = sigma_near*factor;
                 r_near1 = (int)ceil(2*sigma_one);
 
                     for (int k = -r_near1; k < r_near1 + 1; k++) {
@@ -143,10 +143,8 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftcppnative(J
                 E = (pixels[j*width+i]>>8)&0xff;
                 F = (pixels[j*width+i]>>16)&0xff;
             }
-            //int G = (pixels[j*width+i]>>8)%0xff;
-            //int R = (pixels[j*width+i]>>16)%0xff;
+
             int A = 0xff;
-            //int D=0;
             int color = (A & 0xff) << 24 | (F & 0xff) << 16 | (E & 0xff) << 8 | (D & 0xff);
 
             pixelsi[j*width+i]=color;
