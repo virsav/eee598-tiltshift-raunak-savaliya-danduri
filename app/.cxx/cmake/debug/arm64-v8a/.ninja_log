@@ -1,0 +1,15 @@
+# ninja log v5
+3	568	620288970	CMakeFiles/cpufeatures.dir/C_/Users/rauna/AppData/Local/Android/Sdk/ndk/21.0.6113669/sources/android/cpufeatures/cpu-features.c.o	2f2fcb50d8cdabe6
+16	682	620288970	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	44ca57c1b3c06296
+569	1197	620288971	libcpufeatures.a	10130380c6c13e92
+1197	1376	620288971	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so	fa8392737811525c
+5	906	620401203	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	44ca57c1b3c06296
+907	1069	620401203	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so	fa8392737811525c
+5	816	620402682	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	44ca57c1b3c06296
+816	973	620402682	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so	fa8392737811525c
+6	475	620628123	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	44ca57c1b3c06296
+476	672	620628123	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so	fa8392737811525c
+5	461	620775180	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	44ca57c1b3c06296
+461	638	620775180	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so	fa8392737811525c
+2	369	620775572	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	44ca57c1b3c06296
+369	436	620775572	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so	fa8392737811525c
