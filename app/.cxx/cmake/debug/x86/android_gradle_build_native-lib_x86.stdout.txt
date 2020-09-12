@@ -1,4 +1,0 @@
-ninja: Entering directory `C:\Users\rauna\OneDrive\Desktop\MSA\SpeedyTiltShift2018\app\.cxx\cmake\debug\x86'
-[1/2] Building CXX object CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o
-clang++: warning: argument unused during compilation: '-mfpu=neon' [-Wunused-command-line-argument]
-[2/2] Linking CXX shared library ..\..\..\..\build\intermediates\cmake\debug\obj\x86\libnative-lib.so

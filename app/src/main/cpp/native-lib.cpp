@@ -1,10 +1,13 @@
 #include <jni.h>
 #include <string>
 #include <cpu-features.h>
+#include <cmath>
 
+jint pixelval(jint x, jint y,jint * pixels,jint height,jint width);
+jint finalPixelval(jint x, jint y,jint *pixels,jint height,jint width,jfloat sigma,jint flag);
+jfloat Gk(jint k, jfloat sigma);
 extern "C"
 JNIEXPORT jint JNICALL
-
 Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftcppnative(JNIEnv *env,
                                                                                jobject instance,
                                                                                jintArray inputPixels_,
@@ -16,287 +19,120 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftcppnative(J
                                                                                jint a0, jint a1,
                                                                                jint a2, jint a3) {
     jint *pixels = env->GetIntArrayElements(inputPixels_, NULL);
-    jint *pixelsi = env->GetIntArrayElements(outputPixels_, NULL);
     jint *outputPixels = env->GetIntArrayElements(outputPixels_, NULL);
-    int r_near = (int)ceil(2*sigma_near);
-    int r_far = (int)ceil(2*sigma_far);
-
-   int D=0;
-   int r_far1;
-   int r_near1;
-   double summationD=0;
-   double normalD = 0;
-   int E=0;
-   int F=0;
-   int B=0;
-   int G=0;
-   int R=0;
-   double summation=0;
-   float sigma_one=0;
-   jfloat factor=0;
-    jfloat fact = 0;
-    jfloat a_0 = 0;
-    jfloat a_1 = 0;
-    jfloat a_2 = 0;
-    jfloat a_3 = 0;
-    for (int j=0;j<height;j++){
-        for (int i=0;i<width;i++) {
-            if(j>r_far-1 /*&& j<height-3*/ && i>r_far-1 && i<width-r_far && sigma_far>0.6 && j<a0){
-
-                sigma_one = sigma_far;
-                for(int k = -r_far; k < r_far+1; k++){
-                    summation += ((exp(-((k*k)/(2*sigma_one*sigma_one))))*(1/sqrt(2*3.14*sigma_one*sigma_one)));
-                }
-
-                for(int k = -r_far; k < r_far+1; k++){
-                     B = pixels[j*width+(i+k)]&0xff;
-                     G = (pixels[j*width+(i+k)]>>8)&0xff;
-                     R = (pixels[j*width+(i+k)]>>16)&0xff;
-                    summationD = ((exp(-((k*k)/(2*sigma_one*sigma_one))))*(1/sqrt(2*3.14*sigma_one*sigma_one)));
-                    normalD = summationD/summation;
-                    D += normalD*B;
-                    E += normalD*G;
-                    F += normalD*R;
-                }
-
-            }
-            else if(/*j>2 && j<height-3*/ i>r_far-1 && i<width-r_far && sigma_far>0.6 && j>=a0 && j<a1){
-
-                 fact = (jfloat)j;
-                 a_0 = (jfloat)a0;
-                 a_1 = (jfloat)a1;
-
-                factor = (a_1-fact)*(1/(a_1-a_0));
-
-                sigma_one = sigma_far*factor;
-                r_far1 = (int)ceil(2*sigma_one);
-                    for (int k = -r_far1; k < r_far1 + 1; k++) {
-                        summation += ((exp(-((k * k) / (2 * sigma_one * sigma_one)))) *
-                                      (1 / sqrt(2 * 3.14 * sigma_one * sigma_one)));
-                    }
-
-                    for (int k = -r_far1; k < r_far1 + 1; k++) {
-                        B = pixels[j * width + (i + k)] & 0xff;
-                        G = (pixels[j * width + (i + k)] >> 8) & 0xff;
-                        R = (pixels[j * width + (i + k)] >> 16) & 0xff;
-                        summationD = ((exp(-((k * k) / (2 * sigma_one * sigma_one)))) *
-                                      (1 / sqrt(2 * 3.14 * sigma_one * sigma_one)));
-                        normalD = summationD / summation;
-                        D += normalD * B;
-                        E += normalD * G;
-                        F += normalD * R;
-                    }
-
-
-            }
-            else if(/*j>2 && j<height-3 &&*/ i>r_near-1 && i<width-r_near && sigma_near>0.6 && j>a2 && j<=a3){
-
-                fact = (jfloat)j;
-                a_2 = (jfloat)a2;
-                a_3 = (jfloat)a3;
-                factor = (fact-a_2)*(1/(a_3-a_2));
-                sigma_one = sigma_near*factor;
-                r_near1 = (int)ceil(2*sigma_one);
-
-                    for (int k = -r_near1; k < r_near1 + 1; k++) {
-                        summation += ((exp(-((k * k) / (2 * sigma_one * sigma_one)))) *
-                                      (1 / sqrt(2 * 3.14 * sigma_one * sigma_one)));
-                    }
-
-                    for (int k = -r_near1; k < r_near1 + 1; k++) {
-                        B = pixels[j * width + (i + k)] & 0xff;
-                        G = (pixels[j * width + (i + k)] >> 8) & 0xff;
-                        R = (pixels[j * width + (i + k)] >> 16) & 0xff;
-                        summationD = ((exp(-((k * k) / (2 * sigma_one * sigma_one)))) *
-                                      (1 / sqrt(2 * 3.14 * sigma_one * sigma_one)));
-                        normalD = summationD / summation;
-                        D += normalD * B;
-                        E += normalD * G;
-                        F += normalD * R;
-                    }
-
-
-
-            }
-            else if(/*j>2 &&*/ j<height-r_near && i>r_near-1 && i<width-r_near && sigma_near>0.6 && j>a3  ){
-
-                sigma_one = sigma_near;
-                for(int k = -r_near; k < r_near+1; k++){
-                    summation += ((exp(-((k*k)/(2*sigma_one*sigma_one))))*(1/sqrt(2*3.14*sigma_one*sigma_one)));
-                }
-
-                for(int k = -r_near; k < r_near+1; k++){
-                     B = pixels[j*width+(i+k)]&0xff;
-                     G = (pixels[j*width+(i+k)]>>8)&0xff;
-                     R = (pixels[j*width+(i+k)]>>16)&0xff;
-                    summationD = ((exp(-((k*k)/(2*sigma_one*sigma_one))))*(1/sqrt(2*3.14*sigma_one*sigma_one)));
-                    normalD = summationD/summation;
-                    D += normalD*B;
-                    E += normalD*G;
-                    F += normalD*R;
-                }
-
-            }
-
-            else{
-                D = pixels[j*width+i]&0xff;;
-                E = (pixels[j*width+i]>>8)&0xff;
-                F = (pixels[j*width+i]>>16)&0xff;
-            }
-
-            int A = 0xff;
-            int color = (A & 0xff) << 24 | (F & 0xff) << 16 | (E & 0xff) << 8 | (D & 0xff);
-
-            pixelsi[j*width+i]=color;
-            summation=0;
-            D=0;
-            E=0;
-            F=0;
+    jint *intermediatepixels = env->GetIntArrayElements(outputPixels_, NULL);
+    jfloat sigma=0;
+    jint noblur=0;
+    for (jint j=0;j<height;j++){
+        for (jint i=0;i<width;i++) {
+            if(j<a0)
+                sigma=sigma_far;
+            else if(j>=a0&&j<a1)
+                sigma=sigma_far*((jfloat)((a1-j)/(jfloat)(a1-a0)));
+            else if(j>=a1&&j<=a2)
+                noblur=1;
+            else if(j>a2&&j<=a3)
+                sigma=sigma_near*((jfloat)((j-a2)/(jfloat)(a3-a2)));
+            else if(j>a3)
+                sigma=sigma_near;
+            if((noblur==1)||sigma<0.6)
+                intermediatepixels[j*width+i]=pixels[j*width+i];
+            else
+                intermediatepixels[j*width+i]=finalPixelval(j,i,pixels,height,width,sigma,0);
+            noblur=0;
+            sigma=0;
         }
     }
-
-    for (int j=0;j<height;j++){
-        for (int i=0;i<width;i++) {
-            if(j>r_far-1/* && j<height-3 */&& i>r_far-1 && i<width-r_far && sigma_far>0.6 && j<a0){
-                //int r = 1 + (int)ceil(2*sigma_far);
-                sigma_one = sigma_far;
-                for(int k = -r_far; k < r_far+1; k++){
-                    summation += ((exp(-((k*k)/(2*sigma_one*sigma_one))))*(1/sqrt(2*3.14*sigma_one*sigma_one)));
-                }
-
-                for(int k = -r_far; k < r_far+1; k++){
-                     B = pixelsi[(j+k)*width+i]&0xff;
-                     G = (pixelsi[(j+k)*width+i]>>8)&0xff;
-                     R = (pixelsi[(j+k)*width+i]>>16)&0xff;
-                    summationD = ((exp(-((k*k)/(2*sigma_one*sigma_one))))*(1/sqrt(2*3.14*sigma_one*sigma_one)));
-                    normalD = summationD/summation;
-                    D += normalD*B;
-                    E += normalD*G;
-                    F += normalD*R;
-                }
-
-            }
-            else if(/*j>2 && j<height-3 &&*/ i>r_far-1 && i<width-r_far && sigma_far>0.6 && j>=a0 && j<a1){
-
-                fact = (jfloat)j;
-                a_0 = (jfloat)a0;
-                a_1 = (jfloat)a1;
-                factor = (a_1-fact)*(1/(a_1-a_0));
-                sigma_one = sigma_far*factor/*((a1-j)/(a1-a0))*/;
-                r_far1 = (int)ceil(2*sigma_one);
-
-                    for (int k = -r_far1; k < r_far1 + 1; k++) {
-                        summation += ((exp(-((k * k) / (2 * sigma_one * sigma_one)))) *
-                                      (1 / sqrt(2 * 3.14 * sigma_one * sigma_one)));
-                    }
-
-                    for (int k = -r_far1; k < r_far1 + 1; k++) {
-                        B = pixelsi[(j + k) * width + i] & 0xff;
-                        G = (pixelsi[(j + k) * width + i] >> 8) & 0xff;
-                        R = (pixelsi[(j + k) * width + i] >> 16) & 0xff;
-                        summationD = ((exp(-((k * k) / (2 * sigma_one * sigma_one)))) *
-                                      (1 / sqrt(2 * 3.14 * sigma_one * sigma_one)));
-                        normalD = summationD / summation;
-                        D += normalD * B;
-                        E += normalD * G;
-                        F += normalD * R;
-                    }
-
-            }
-            else if(/*j>2 && j<height-3 &&*/ i>r_near-1 && i<width-r_near && sigma_near>0.6 && j>a2 && j<=a3){
-
-                fact = (jfloat)j;
-                a_2 = (jfloat)a2;
-                a_3 = (jfloat)a3;
-                factor = (fact-a_2)*(1/(a_3-a_2));
-                sigma_one = sigma_near*factor/*((j-a2)/(a3-a2))*/;
-                r_near1 = (int)ceil(2*sigma_one);
-
-                    for (int k = -r_near1; k < r_near1 + 1; k++) {
-                        summation += ((exp(-((k * k) / (2 * sigma_one * sigma_one)))) *
-                                      (1 / sqrt(2 * 3.14 * sigma_one * sigma_one)));
-                    }
-
-                    for (int k = -r_near1; k < r_near1 + 1; k++) {
-                        B = pixelsi[(j + k) * width + i] & 0xff;
-                        G = (pixelsi[(j + k) * width + i] >> 8) & 0xff;
-                        R = (pixelsi[(j + k) * width + i] >> 16) & 0xff;
-                        summationD = ((exp(-((k * k) / (2 * sigma_one * sigma_one)))) *
-                                      (1 / sqrt(2 * 3.14 * sigma_one * sigma_one)));
-                        normalD = summationD / summation;
-                        D += normalD * B;
-                        E += normalD * G;
-                        F += normalD * R;
-                    }
-
-            }
-            else if(/*j>2 && */j<height-r_near && i>r_near-1 && i<width-r_near && sigma_near>0.6 && j>a3){
-
-
-                sigma_one = sigma_near;
-                for(int k = -r_near; k < r_near+1; k++){
-                    summation += ((exp(-((k*k)/(2*sigma_one*sigma_one))))*(1/sqrt(2*3.14*sigma_one*sigma_one)));
-                }
-
-                for(int k = -r_near; k < r_near+1; k++){
-                     B = pixelsi[(j+k)*width+i]&0xff;
-                     G = (pixelsi[(j+k)*width+i]>>8)&0xff;
-                     R = (pixelsi[(j+k)*width+i]>>16)&0xff;
-                    summationD = ((exp(-((k*k)/(2*sigma_one*sigma_one))))*(1/sqrt(2*3.14*sigma_one*sigma_one)));
-                    normalD = summationD/summation;
-                    D += normalD*B;
-                    E += normalD*G;
-                    F += normalD*R;
-                }
-
-
-            }
-            else{
-                D = pixels[j*width+i]&0xff;;
-                E = (pixels[j*width+i]>>8)&0xff;
-                F = (pixels[j*width+i]>>16)&0xff;
-            }
-            //int G = (pixels[j*width+i]>>8)%0xff;
-            //int R = (pixels[j*width+i]>>16)%0xff;
-            int A = 0xff;
-            //int D=0;
-            int color = (A & 0xff) << 24 | (F & 0xff) << 16 | (E & 0xff) << 8 | (D & 0xff);
-
-            outputPixels[j*width+i]=color;
-            summation=0;
-            D=0;
-            E=0;
-            F=0;
+    for (jint j=0;j<height;j++){
+        for (jint i=0;i<width;i++) {
+            if(j<=a0)
+                sigma=sigma_far;
+            else if(j>a0&&j<=a1)
+                sigma=sigma_far*((jfloat)((a1-j)/(jfloat)(a1-a0)));
+            else if(j>a1&&j<=a2)
+                noblur=1;
+            else if(j>a2&&j<=a3)
+                sigma=sigma_near*((jfloat)((j-a2)/(jfloat)(a3-a2)));
+            else if(j>a3)
+                sigma=sigma_near;
+            if((noblur==1)||sigma<0.6)
+                outputPixels[j*width+i]=pixels[j*width+i];
+            else
+                outputPixels[j*width+i]=finalPixelval(j,i,intermediatepixels,height,width,sigma,1);
+            noblur=0;
+            sigma=0;
         }
     }
-
 
     env->ReleaseIntArrayElements(inputPixels_, pixels, 0);
-    env->ReleaseIntArrayElements(outputPixels_, pixelsi, 0);
     env->ReleaseIntArrayElements(outputPixels_, outputPixels, 0);
-     return 0;
+    return 0;
+}
+jint finalPixelval(jint x, jint y,jint *pixels,jint height,jint width,jfloat sigma,jint flag){
+    jint r,color=0,B=0,G=0,R=0,A=0xff,val=0,B_=0,G_=0,R_=0;
+    r=(jint)std::ceil((double)2*sigma);
+    jfloat gk=0;
+    if(flag==0){
+        for(jint i=-r;i<=r;i++){
+            val=pixelval(x+i,y,pixels,height,width);
+            gk=Gk(i,sigma);
+            B = val & 0xff;
+            G = (val>>8) & 0xff;
+            R = (val>>16) & 0xff;
+            B_ += B*gk;
+            G_ += G*gk;
+            R_ += R*gk;
+        }
+    }
+    else if(flag==1){
+        for(jint i=-r;i<=r;i++){
+            val=pixelval(x,y+i,pixels,height,width);
+            gk=Gk(i,sigma);
+            B = val & 0xff;
+            G = (val>>8) & 0xff;
+            R = (val>>16) & 0xff;
+            B_ += B*gk;
+            G_ += G*gk;
+            R_ += R*gk;
+        }
+    }
+    color = (A & 0xff) << 24 | (R_ & 0xff) << 16 | (G_ & 0xff) << 8 | (B_ & 0xff);
+    return color;
+}
+jfloat Gk(jint k, jfloat sigma){
+    jfloat res,constant=(1/std::sqrt(2*3.14*std::pow(sigma,2)));
+    res=constant*(std::exp(-1*(std::pow(k,2)/(2*std::pow(sigma,2)))));
+    return  res;
+}
+
+jint pixelval(jint x, jint y,jint* pixels,jint height,jint width){
+    if(x>=height||y>=width||x<0||y<0)
+        return 0;
+    else{
+        return (pixels[x*width+y]);
+    }
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
 Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftneonnative(JNIEnv *env,
-                                                                               jobject instance,
-                                                                               jintArray inputPixels_,
-                                                                               jintArray outputPixels_,
-                                                                               jint width,
-                                                                               jint height,
-                                                                               jfloat sigma_far,
-                                                                               jfloat sigma_near,
-                                                                               jint a0, jint a1,
-                                                                               jint a2, jint a3) {
+                                                                                jclass instance,
+                                                                                jintArray inputPixels_,
+                                                                                jintArray outputPixels_,
+                                                                                jint width,
+                                                                                jint height,
+                                                                                jfloat sigma_far,
+                                                                                jfloat sigma_near,
+                                                                                jint a0, jint a1,
+                                                                                jint a2, jint a3) {
     jint *pixels = env->GetIntArrayElements(inputPixels_, NULL);
     jint *outputPixels = env->GetIntArrayElements(outputPixels_, NULL);
 
     for (int j=0;j<height;j++){
         for (int i=0;i<width;i++) {
-            int B = pixels[j*width+i]%0xff;
-            int G = (pixels[j*width+i]>>8)%0xff;
-            int R = (pixels[j*width+i]>>16)%0xff;
+            int B = pixels[j*width+i]%0x100;
+            int G = (pixels[j*width+i]>>8)%0x100;
+            int R = (pixels[j*width+i]>>16)%0x100;
             int A = 0xff;
             R=0;
             int color = (A & 0xff) << 24 | (R & 0xff) << 16 | (G & 0xff) << 8 | (B & 0xff);
