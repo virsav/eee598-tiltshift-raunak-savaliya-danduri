@@ -173,7 +173,7 @@ public class SpeedyTiltShift {
                     G1 = (val >> 8) & 0xff;
                     R1 = (val >> 16) & 0xff;
                 }
-                -
+
                 int A = 0xff;
                 int color =((A & 0xff) << 24) | ((R1 & 0xff) << 16) | ((G1 & 0xff) << 8 )| (B1 & 0xff);
                 B1=0;G1=0;R1=0;
