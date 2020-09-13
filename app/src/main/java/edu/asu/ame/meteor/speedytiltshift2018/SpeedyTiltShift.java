@@ -24,12 +24,12 @@ public class SpeedyTiltShift {
 
     }
     public  static float Gk(int k,float sigma){
-        return (float) ((Math.exp(-((k * k) / (2 * sigma * sigma)))) * (1 / Math.sqrt(2 * 3.14 * sigma * sigma)));
+        return (float) ((Math.exp(-((k * k) / (2 * Math.pow(sigma,2))))) * (1 / Math.sqrt(2 * 3.14 * Math.pow(sigma,2))));
     }
 
     public static int finalpixelval(int x,int y,Bitmap b,int[] arr,float sigma,int flag){
-        int R=0, G=0, B=0, R1=0, G1=0, B1=0,val=0;
-        float vectorG_norm=0;
+        int R, G, B, R1=0, G1=0, B1=0,val=0,color;
+        float vectorG_norm;
         int r = (int)Math.ceil(2*sigma);
         for (int k = -1*r; k <= r; k++) {
             if(flag==0){
@@ -42,12 +42,12 @@ public class SpeedyTiltShift {
             G = (val >> 8) & 0xff;
             R = (val >> 16) & 0xff;
             vectorG_norm = Gk(k,sigma);
-            B1 += vectorG_norm * B;
-            G1 += vectorG_norm * G;
-            R1 += vectorG_norm * R;
+            B1 += (int)(vectorG_norm * B);
+            G1 += (int)(vectorG_norm * G);
+            R1 += (int)(vectorG_norm * R);
         }
         int A = 0xff;
-        int color =((A & 0xff) << 24) | ((R1 & 0xff) << 16) | ((G1 & 0xff) << 8 )| (B1 & 0xff);
+        color =((A & 0xff) << 24) | ((R1 & 0xff) << 16) | ((G1 & 0xff) << 8 )| (B1 & 0xff);
         return color;
 
     }
@@ -75,25 +75,23 @@ public class SpeedyTiltShift {
         int[] pixelsOut = new int[input.getHeight()*input.getWidth()];
 
 
-        float sigma_one=0;
+        float sigma_one;
         for(int y = 0; y < input.getHeight(); y++) {
             for (int x=0;x<input.getWidth();x++) {
-                if(!(y>=a1 && y<=a2)){
-                    sigma_one= sigmacal(y,sigma_far,sigma_near,a0,a1,a2,a3);
-                    pixelsinn[y*input.getWidth()+x]= finalpixelval(x,y,input,pixelsinn,sigma_one,0);
-                }
-                else
+                sigma_one= 5*sigmacal(y,sigma_far,sigma_near,a0,a1,a2,a3);
+                if((y>=a1 && y<=a2)||(sigma_one<0.6))
                     pixelsinn[y*input.getWidth()+x]=input.getPixel(x,y);
+                else
+                    pixelsinn[y*input.getWidth()+x]= finalpixelval(x,y,input,pixelsinn,sigma_one,0);
             }
         }
         for(int y = 0; y < input.getHeight(); y++) {
             for (int x=0;x<input.getWidth();x++) {
-                if(!(y>=a1 && y<=a2)){
-                    sigma_one= sigmacal(y,sigma_far,sigma_near,a0,a1,a2,a3);
-                    pixelsOut[y*input.getWidth()+x]= finalpixelval(x,y,input,pixelsinn,sigma_one,1);
-                }
-                else
+                sigma_one= 5*sigmacal(y,sigma_far,sigma_near,a0,a1,a2,a3);
+                if((y>=a1 && y<=a2)||(sigma_one<0.6))
                     pixelsOut[y*input.getWidth()+x]=input.getPixel(x,y);
+                else
+                    pixelsOut[y*input.getWidth()+x]= finalpixelval(x,y,input,pixelsinn,sigma_one,1);
             }
         }
 
