@@ -1,26 +1,26 @@
 {
   "buildFiles": [
-    "C:\\Users\\rauna\\AppData\\Local\\Android\\Sdk\\ndk\\21.0.6113669\\build\\cmake\\platforms.cmake",
-    "C:\\Users\\rauna\\AppData\\Local\\Android\\Sdk\\ndk\\21.0.6113669\\build\\cmake\\android.toolchain.cmake",
-    "C:\\Users\\rauna\\OneDrive\\Desktop\\MSA\\SpeedyTiltShift2018\\app\\CMakeLists.txt"
+    "C:\\Users\\viraj\\AppData\\Local\\Android\\Sdk\\ndk\\21.0.6113669\\build\\cmake\\android.toolchain.cmake",
+    "C:\\Users\\viraj\\AppData\\Local\\Android\\Sdk\\ndk\\21.0.6113669\\build\\cmake\\platforms.cmake",
+    "C:\\Users\\viraj\\OneDrive\\Desktop\\ASU\\ASU Fall 20\\MSA\\git_repo\\app\\CMakeLists.txt"
   ],
   "cleanCommands": [
-    "C:\\Users\\rauna\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\rauna\\OneDrive\\Desktop\\MSA\\SpeedyTiltShift2018\\app\\.cxx\\cmake\\release\\arm64-v8a\" clean"
+    "C:\\Users\\viraj\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\viraj\\OneDrive\\Desktop\\ASU\\ASU Fall 20\\MSA\\git_repo\\app\\.cxx\\cmake\\release\\arm64-v8a\" clean"
   ],
-  "buildTargetsCommand": "C:\\Users\\rauna\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe  -C \"C:\\Users\\rauna\\OneDrive\\Desktop\\MSA\\SpeedyTiltShift2018\\app\\.cxx\\cmake\\release\\arm64-v8a\" {LIST_OF_TARGETS_TO_BUILD}",
+  "buildTargetsCommand": "C:\\Users\\viraj\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe  -C \"C:\\Users\\viraj\\OneDrive\\Desktop\\ASU\\ASU Fall 20\\MSA\\git_repo\\app\\.cxx\\cmake\\release\\arm64-v8a\" {LIST_OF_TARGETS_TO_BUILD}",
   "libraries": {
     "native-lib-Release-arm64-v8a": {
       "artifactName": "native-lib",
-      "buildCommand": "C:\\Users\\rauna\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\rauna\\OneDrive\\Desktop\\MSA\\SpeedyTiltShift2018\\app\\.cxx\\cmake\\release\\arm64-v8a\" native-lib",
+      "buildCommand": "C:\\Users\\viraj\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\viraj\\OneDrive\\Desktop\\ASU\\ASU Fall 20\\MSA\\git_repo\\app\\.cxx\\cmake\\release\\arm64-v8a\" native-lib",
       "abi": "arm64-v8a",
-      "output": "C:\\Users\\rauna\\OneDrive\\Desktop\\MSA\\SpeedyTiltShift2018\\app\\build\\intermediates\\cmake\\release\\obj\\arm64-v8a\\libnative-lib.so",
+      "output": "C:\\Users\\viraj\\OneDrive\\Desktop\\ASU\\ASU Fall 20\\MSA\\git_repo\\app\\build\\intermediates\\cmake\\release\\obj\\arm64-v8a\\libnative-lib.so",
       "runtimeFiles": []
     },
     "cpufeatures-Release-arm64-v8a": {
       "artifactName": "cpufeatures",
-      "buildCommand": "C:\\Users\\rauna\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\rauna\\OneDrive\\Desktop\\MSA\\SpeedyTiltShift2018\\app\\.cxx\\cmake\\release\\arm64-v8a\" cpufeatures",
+      "buildCommand": "C:\\Users\\viraj\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\viraj\\OneDrive\\Desktop\\ASU\\ASU Fall 20\\MSA\\git_repo\\app\\.cxx\\cmake\\release\\arm64-v8a\" cpufeatures",
       "abi": "arm64-v8a",
-      "output": "C:\\Users\\rauna\\OneDrive\\Desktop\\MSA\\SpeedyTiltShift2018\\app\\.cxx\\cmake\\release\\arm64-v8a\\libcpufeatures.a",
+      "output": "C:\\Users\\viraj\\OneDrive\\Desktop\\ASU\\ASU Fall 20\\MSA\\git_repo\\app\\.cxx\\cmake\\release\\arm64-v8a\\libcpufeatures.a",
       "runtimeFiles": []
     }
   }

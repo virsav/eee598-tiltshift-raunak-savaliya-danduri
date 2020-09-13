@@ -1,7 +1,0 @@
-Executable : C:\Users\rauna\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\ninja.exe
-arguments : 
--C
-C:\Users\rauna\OneDrive\Desktop\MSA\SpeedyTiltShift2018\app\.cxx\cmake\debug\arm64-v8a
-native-lib
-jvmArgs : 
-

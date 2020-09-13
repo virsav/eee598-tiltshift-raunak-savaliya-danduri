@@ -1,20 +1,20 @@
-Executable : C:\Users\rauna\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\cmake.exe
+Executable : C:\Users\viraj\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\cmake.exe
 arguments : 
--HC:\Users\rauna\OneDrive\Desktop\MSA\SpeedyTiltShift2018\app
--DCMAKE_FIND_ROOT_PATH=C:\Users\rauna\OneDrive\Desktop\MSA\SpeedyTiltShift2018\app\.cxx\cmake\debug\prefab\arm64-v8a\prefab
+-HC:\Users\viraj\OneDrive\Desktop\ASU\ASU Fall 20\MSA\git_repo\app
+-DCMAKE_FIND_ROOT_PATH=C:\Users\viraj\OneDrive\Desktop\ASU\ASU Fall 20\MSA\git_repo\app\.cxx\cmake\debug\prefab\arm64-v8a\prefab
 -DCMAKE_BUILD_TYPE=Debug
--DCMAKE_TOOLCHAIN_FILE=C:\Users\rauna\AppData\Local\Android\Sdk\ndk\21.0.6113669\build\cmake\android.toolchain.cmake
+-DCMAKE_TOOLCHAIN_FILE=C:\Users\viraj\AppData\Local\Android\Sdk\ndk\21.0.6113669\build\cmake\android.toolchain.cmake
 -DANDROID_ABI=arm64-v8a
--DANDROID_NDK=C:\Users\rauna\AppData\Local\Android\Sdk\ndk\21.0.6113669
+-DANDROID_NDK=C:\Users\viraj\AppData\Local\Android\Sdk\ndk\21.0.6113669
 -DANDROID_PLATFORM=android-24
 -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a
--DCMAKE_ANDROID_NDK=C:\Users\rauna\AppData\Local\Android\Sdk\ndk\21.0.6113669
+-DCMAKE_ANDROID_NDK=C:\Users\viraj\AppData\Local\Android\Sdk\ndk\21.0.6113669
 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
--DCMAKE_LIBRARY_OUTPUT_DIRECTORY=C:\Users\rauna\OneDrive\Desktop\MSA\SpeedyTiltShift2018\app\build\intermediates\cmake\debug\obj\arm64-v8a
--DCMAKE_MAKE_PROGRAM=C:\Users\rauna\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\ninja.exe
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=C:\Users\viraj\OneDrive\Desktop\ASU\ASU Fall 20\MSA\git_repo\app\build\intermediates\cmake\debug\obj\arm64-v8a
+-DCMAKE_MAKE_PROGRAM=C:\Users\viraj\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\ninja.exe
 -DCMAKE_SYSTEM_NAME=Android
 -DCMAKE_SYSTEM_VERSION=24
--BC:\Users\rauna\OneDrive\Desktop\MSA\SpeedyTiltShift2018\app\.cxx\cmake\debug\arm64-v8a
+-BC:\Users\viraj\OneDrive\Desktop\ASU\ASU Fall 20\MSA\git_repo\app\.cxx\cmake\debug\arm64-v8a
 -GNinja
 jvmArgs : 
 
