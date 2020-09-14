@@ -3,9 +3,10 @@
 #include <cpu-features.h>
 #include <cmath>
 
-jint pixelval(jint x, jint y,jint * pixels,jint height,jint width);
-jint finalPixelval(jint x, jint y,jint *pixels,jint height,jint width,jfloat sigma,jint flag);
+jint pixelval(jint y, jint x,jint* pixels,jint height,jint width);
+jint finalPixelval(jint y, jint x,jint *pixels,jint height,jint width,jfloat sigma,jint flag);
 jfloat Gk(jint k, jfloat sigma);
+jfloat sigmacal(jint y,jfloat sigma_far,jfloat sigma_near,jint a0, jint a1,jint a2, jint a3);
 extern "C"
 JNIEXPORT jint JNICALL
 Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftcppnative(JNIEnv *env,
@@ -21,46 +22,21 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftcppnative(J
     jint *pixels = env->GetIntArrayElements(inputPixels_, NULL);
     jint *outputPixels = env->GetIntArrayElements(outputPixels_, NULL);
     jint *intermediatepixels = env->GetIntArrayElements(outputPixels_, NULL);
+    jint *temp1Arr=intermediatepixels,*temp2Arr=pixels;
+
     jfloat sigma=0;
-    jint noblur=0;
-    for (jint j=0;j<height;j++){
-        for (jint i=0;i<width;i++) {
-            if(j<a0)
-                sigma=sigma_far;
-            else if(j>=a0&&j<a1)
-                sigma=sigma_far*((jfloat)((a1-j)/(jfloat)(a1-a0)));
-            else if(j>=a1&&j<=a2)
-                noblur=1;
-            else if(j>a2&&j<=a3)
-                sigma=sigma_near*((jfloat)((j-a2)/(jfloat)(a3-a2)));
-            else if(j>a3)
-                sigma=sigma_near;
-            if((noblur==1)||sigma<0.6)
-                intermediatepixels[j*width+i]=pixels[j*width+i];
-            else
-                intermediatepixels[j*width+i]=finalPixelval(j,i,pixels,height,width,sigma,0);
-            noblur=0;
-            sigma=0;
+    for(int times=0;times<2;times++){
+        if(times==1){
+            temp1Arr=outputPixels;temp2Arr=intermediatepixels;
         }
-    }
-    for (jint j=0;j<height;j++){
-        for (jint i=0;i<width;i++) {
-            if(j<=a0)
-                sigma=sigma_far;
-            else if(j>a0&&j<=a1)
-                sigma=sigma_far*((jfloat)((a1-j)/(jfloat)(a1-a0)));
-            else if(j>a1&&j<=a2)
-                noblur=1;
-            else if(j>a2&&j<=a3)
-                sigma=sigma_near*((jfloat)((j-a2)/(jfloat)(a3-a2)));
-            else if(j>a3)
-                sigma=sigma_near;
-            if((noblur==1)||sigma<0.6)
-                outputPixels[j*width+i]=pixels[j*width+i];
-            else
-                outputPixels[j*width+i]=finalPixelval(j,i,intermediatepixels,height,width,sigma,1);
-            noblur=0;
-            sigma=0;
+        for (jint y=0;y<height;y++){
+            for (jint x=0;x<width;x++) {
+                sigma=sigmacal(y,sigma_far,sigma_near,a0,a1,a2,a3);
+                if((y>=a1&&y<=a2)||sigma<0.6)
+                    temp1Arr[y*width+x]=pixels[y*width+x];
+                else
+                    temp1Arr[y*width+x]=finalPixelval(y,x,temp2Arr,height,width,sigma,times);
+            }
         }
     }
 
@@ -68,33 +44,34 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftcppnative(J
     env->ReleaseIntArrayElements(outputPixels_, outputPixels, 0);
     return 0;
 }
-jint finalPixelval(jint x, jint y,jint *pixels,jint height,jint width,jfloat sigma,jint flag){
+jfloat sigmacal(jint y,jfloat sigma_far,jfloat sigma_near,jint a0, jint a1,jint a2, jint a3){
+    jfloat sigma;
+    if(y<a0)
+        sigma=sigma_far;
+    else if(y>=a0&&y<a1)
+        sigma=sigma_far*((jfloat)((a1-y)/(jfloat)(a1-a0)));
+    else if(y>a2&&y<=a3)
+        sigma=sigma_near*((jfloat)((y-a2)/(jfloat)(a3-a2)));
+    else if(y>a3)
+        sigma=sigma_near;
+    return sigma;
+}
+jint finalPixelval(jint y, jint x,jint *pixels,jint height,jint width,jfloat sigma,jint flag){
     jint r,color=0,B=0,G=0,R=0,A=0xff,val=0,B_=0,G_=0,R_=0;
     r=(jint)std::ceil((double)2*sigma);
     jfloat gk=0;
-    if(flag==0){
-        for(jint i=-r;i<=r;i++){
-            val=pixelval(x+i,y,pixels,height,width);
-            gk=Gk(i,sigma);
-            B = val & 0xff;
-            G = (val>>8) & 0xff;
-            R = (val>>16) & 0xff;
-            B_ += B*gk;
-            G_ += G*gk;
-            R_ += R*gk;
-        }
-    }
-    else if(flag==1){
-        for(jint i=-r;i<=r;i++){
-            val=pixelval(x,y+i,pixels,height,width);
-            gk=Gk(i,sigma);
-            B = val & 0xff;
-            G = (val>>8) & 0xff;
-            R = (val>>16) & 0xff;
-            B_ += B*gk;
-            G_ += G*gk;
-            R_ += R*gk;
-        }
+    for(jint i=-r;i<=r;i++){
+        if(flag==0)
+            val=pixelval(y+i,x,pixels,height,width);
+        else if(flag==1)
+            val=pixelval(y,x+i,pixels,height,width);
+        gk=Gk(i,sigma);
+        B = val & 0xff;
+        G = (val>>8) & 0xff;
+        R = (val>>16) & 0xff;
+        B_ += B*gk;
+        G_ += G*gk;
+        R_ += R*gk;
     }
     color = (A & 0xff) << 24 | (R_ & 0xff) << 16 | (G_ & 0xff) << 8 | (B_ & 0xff);
     return color;
@@ -104,12 +81,11 @@ jfloat Gk(jint k, jfloat sigma){
     res=constant*(std::exp(-1*(std::pow(k,2)/(2*std::pow(sigma,2)))));
     return  res;
 }
-
-jint pixelval(jint x, jint y,jint* pixels,jint height,jint width){
-    if(x>=height||y>=width||x<0||y<0)
+jint pixelval(jint y, jint x,jint* pixels,jint height,jint width){
+    if(y>=height||x>=width||x<0||y<0)
         return 0;
     else{
-        return (pixels[x*width+y]);
+        return (pixels[y*width+x]);
     }
 }
 
