@@ -1,7 +1,7 @@
 package edu.asu.ame.meteor.speedytiltshift2018;
 
 import android.graphics.Bitmap;
-
+//  This is the updated java code, the sigma values in java come out to be very low, hence the output image is not as good as in cpp.
 public class SpeedyTiltShift {
     static SpeedyTiltShift Singleton = new SpeedyTiltShift();
 
