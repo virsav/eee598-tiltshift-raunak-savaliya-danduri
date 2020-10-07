@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/viraj/OneDrive/Desktop/ASU/ASU Fall 20/MSA/git_repo/app
+# Install script for directory: D:/sem 3/msa/eee598-tiltshift-raunak-savaliya-danduri/app
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/viraj/OneDrive/Desktop/ASU/ASU Fall 20/MSA/git_repo/app/.cxx/cmake/release/x86/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "D:/sem 3/msa/eee598-tiltshift-raunak-savaliya-danduri/app/.cxx/cmake/release/x86/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

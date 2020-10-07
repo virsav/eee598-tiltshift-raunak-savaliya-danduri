@@ -1,4 +1,4 @@
-C:/Users/viraj/OneDrive/Desktop/ASU/ASU Fall 20/MSA/git_repo/app/.cxx/cmake/debug/x86_64/CMakeFiles/cpufeatures.dir
-C:/Users/viraj/OneDrive/Desktop/ASU/ASU Fall 20/MSA/git_repo/app/.cxx/cmake/debug/x86_64/CMakeFiles/native-lib.dir
-C:/Users/viraj/OneDrive/Desktop/ASU/ASU Fall 20/MSA/git_repo/app/.cxx/cmake/debug/x86_64/CMakeFiles/edit_cache.dir
-C:/Users/viraj/OneDrive/Desktop/ASU/ASU Fall 20/MSA/git_repo/app/.cxx/cmake/debug/x86_64/CMakeFiles/rebuild_cache.dir
+D:/sem 3/msa/eee598-tiltshift-raunak-savaliya-danduri/app/.cxx/cmake/debug/x86_64/CMakeFiles/cpufeatures.dir
+D:/sem 3/msa/eee598-tiltshift-raunak-savaliya-danduri/app/.cxx/cmake/debug/x86_64/CMakeFiles/native-lib.dir
+D:/sem 3/msa/eee598-tiltshift-raunak-savaliya-danduri/app/.cxx/cmake/debug/x86_64/CMakeFiles/edit_cache.dir
+D:/sem 3/msa/eee598-tiltshift-raunak-savaliya-danduri/app/.cxx/cmake/debug/x86_64/CMakeFiles/rebuild_cache.dir
