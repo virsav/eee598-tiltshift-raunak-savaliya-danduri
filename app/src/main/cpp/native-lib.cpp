@@ -4,7 +4,7 @@
 #include <cmath>
 #include<arm_neon.h>
 
-#define rightShift 6
+#define rightShift 8
 #define value (int)std::pow(2,rightShift)
 
 jint pixelval(jint y, jint x,jint* pixels,jint height,jint width);
@@ -124,11 +124,11 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftneonnative(
            // pixelFiller_neon(y,x,height,width,(uint32_t *)intermediatepixels,(uint32_t *)pixels,0);
 
             sigma=sigmaCal_neon(y,sigma_far,sigma_near,a0,a1,a2,a3);
-            sigma=5*sigma;
+            sigma=5.0*sigma;
             if((y>=a1&&y<=a2)||sigma<0.6)
                  pixelFiller_neon(y,x,height,width,(uint32_t *)intermediatepixels,(uint32_t *)pixels,0);
             else{
-                colorArr= finalPixelCalc_neon(y,x,height,width,sigma_far,pixels,0);
+                colorArr= finalPixelCalc_neon(y,x,height,width,sigma,pixels,0);
                 pixelFiller_neon(y,x,height,width,(uint32_t *)intermediatepixels,colorArr,1);
                 free(colorArr);
             }
@@ -139,11 +139,11 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftneonnative(
         for(uint32_t x=0;x<width;x=x+16){
            // pixelFiller_neon(y,x,height,width,(uint32_t *)outputPixels,(uint32_t *)pixels,0);
             sigma=sigmaCal_neon(y,sigma_far,sigma_near,a0,a1,a2,a3);
-            sigma=5*sigma;
+            sigma=5.0*sigma;
             if((y>=a1&&y<=a2)||sigma<0.6)
                pixelFiller_neon(y,x,height,width,(uint32_t *)outputPixels,(uint32_t *)pixels,0);
             else{
-                colorArr= finalPixelCalc_neon(y,x,height,width,sigma_far,intermediatepixels,1);
+                colorArr= finalPixelCalc_neon(y,x,height,width,sigma,intermediatepixels,1);
                 pixelFiller_neon(y,x,height,width,(uint32_t *)outputPixels,colorArr,1);
                 free(colorArr);
             }
@@ -271,20 +271,27 @@ uint8x16x4_t vectorLoad_neon(int y,int x,int height, int width,int *pixels){
 
     if(y<0||x<0||y>height||x>width){
         pixelChannels=vld4q_u8(emptyptr);
+        free(emptyptr);
+        return pixelChannels;
     }
     else if((width-x)<16){
         uint32_t *ptr=(uint32_t *)emptyptr;
         uint8_t len=width-x;
-        for(int i=0;i<len;i++)
+        for(int i=0;i<len;i++){
             ptr[i]=pixels[y*width+x];
+            x++;
+        }
         pixelChannels=vld4q_u8(emptyptr);
+        free(emptyptr);
+        return pixelChannels;
     }
     else{
-        free(emptyptr);
         pixelChannels=vld4q_u8((uint8_t *)&pixels[y*width+x]);
+        free(emptyptr);
+        return pixelChannels;
     }
-    return pixelChannels;
 }
+
 
 void pixelFiller_neon(int y, int x, int height, int width,uint32_t *tempPixels,  uint32_t *colorArr,int flag){
     int index,i;
