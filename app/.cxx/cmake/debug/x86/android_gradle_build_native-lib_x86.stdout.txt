@@ -1,0 +1,2 @@
+ninja: Entering directory `D:\sem 3\msa\eee598-tiltshift-raunak-savaliya-danduri\app\.cxx\cmake\debug\x86'
+ninja: no work to do.

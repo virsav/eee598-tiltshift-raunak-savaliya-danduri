@@ -1,0 +1,21 @@
+# ninja log v5
+4	211	623728500	CMakeFiles/cpufeatures.dir/C_/Users/shree/AppData/Local/Android/Sdk/ndk/21.0.6113669/sources/android/cpufeatures/cpu-features.c.o	3c03c422a3021c26
+213	328	623728500	libcpufeatures.a	b79053090754af7c
+1	719	623728501	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	3771cc8faebe9586
+720	822	623728501	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	52cdc83fa2048aed
+5	745	623733793	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	3771cc8faebe9586
+745	935	623733793	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	52cdc83fa2048aed
+3	543	623765847	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	3771cc8faebe9586
+543	762	623765848	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	52cdc83fa2048aed
+4	576	623819579	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	3771cc8faebe9586
+577	782	623819579	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	52cdc83fa2048aed
+2	473	623819701	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	3771cc8faebe9586
+473	551	623819701	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	52cdc83fa2048aed
+2	488	623824712	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	3771cc8faebe9586
+488	560	623824712	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	52cdc83fa2048aed
+3	516	623826173	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	3771cc8faebe9586
+516	587	623826173	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	52cdc83fa2048aed
+2	443	623827671	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	3771cc8faebe9586
+443	509	623827671	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	52cdc83fa2048aed
+2	455	623828345	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	3771cc8faebe9586
+455	523	623828345	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	52cdc83fa2048aed

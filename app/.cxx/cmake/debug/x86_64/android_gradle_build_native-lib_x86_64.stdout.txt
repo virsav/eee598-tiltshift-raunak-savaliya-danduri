@@ -1,0 +1,6 @@
+ninja: Entering directory `D:\sem 3\msa\eee598-tiltshift-raunak-savaliya-danduri\app\.cxx\cmake\debug\x86_64'
+[1/4] Building C object CMakeFiles/cpufeatures.dir/C_/Users/shree/AppData/Local/Android/Sdk/ndk/21.0.6113669/sources/android/cpufeatures/cpu-features.c.o
+[2/4] Linking C static library libcpufeatures.a
+[3/4] Building CXX object CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o
+clang++: warning: argument unused during compilation: '-mfpu=neon' [-Wunused-command-line-argument]
+[4/4] Linking CXX shared library ..\..\..\..\build\intermediates\cmake\debug\obj\x86_64\libnative-lib.so

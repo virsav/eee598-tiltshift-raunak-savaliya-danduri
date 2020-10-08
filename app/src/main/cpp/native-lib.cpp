@@ -3,6 +3,10 @@
 #include <cpu-features.h>
 #include <cmath>
 #include<arm_neon.h>
+
+#define rightShift 6
+#define value (int)std::pow(2,rightShift)
+
 jint pixelval(jint y, jint x,jint* pixels,jint height,jint width);
 jint finalPixelval(jint y, jint x,jint *pixels,jint height,jint width,jfloat sigma,jint flag);
 jfloat Gk(jint k, jfloat sigma);
@@ -11,10 +15,9 @@ jfloat sigmacal(jint y,jfloat sigma_far,jfloat sigma_near,jint a0, jint a1,jint 
 uint8x16x4_t vectorLoad_neon(int y,int x,int height, int width,int *pixels);
 uint8x16x4_t vectorMulGk_neon(float Gk,uint8x16x4_t pixelChannels );
 float Gk_neon(int k, float sigma);
-uint32_t * intermediatePixelCalc_neon(int y, int x,int height, int width, float sigma,int *pixels);
-void pixelFiller_neon(int y, int x, int height, int width,int *pixels, uint32_t *colorArr);
-uint32_t * finalPixelCalc_neon(int y, int x,int height, int width, float sigma,int *pixels);
-void rotateImage_neon(int *orginalImage,int *roatedImage,int height, int width );
+void pixelFiller_neon(int y, int x, int height, int width,uint32_t *tempPixels,  uint32_t *colorArr,int flag);
+uint32_t * finalPixelCalc_neon(int y, int x,int height, int width, float sigma,int *temppixels,int flag);
+float sigmaCal_neon(int y,float sigma_far,float sigma_near,int a0, int a1,int a2, int a3);
 
 extern "C"
 JNIEXPORT jint JNICALL
@@ -30,7 +33,7 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftcppnative(J
                                                                                jint a2, jint a3) {
     jint *pixels = env->GetIntArrayElements(inputPixels_, NULL);
     jint *outputPixels = env->GetIntArrayElements(outputPixels_, NULL);
-    jint *intermediatepixels = env->GetIntArrayElements(outputPixels_, NULL);
+    jint *intermediatepixels= (jint *)malloc(sizeof(int)*height*width);
     jint *temp1Arr=intermediatepixels,*temp2Arr=pixels;
 
     jfloat sigma=0;
@@ -48,7 +51,7 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftcppnative(J
             }
         }
     }
-
+    free(intermediatepixels);
     env->ReleaseIntArrayElements(inputPixels_, pixels, 0);
     env->ReleaseIntArrayElements(outputPixels_, outputPixels, 0);
     return 0;
@@ -112,38 +115,58 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftneonnative(
                                                                                 jint a2, jint a3) {
     jint *pixels = env->GetIntArrayElements(inputPixels_, NULL);
     jint *outputPixels = env->GetIntArrayElements(outputPixels_, NULL);
-    uint8_t * arrayInPtr = (uint8_t *)pixels;
-    uint8_t * arrayOutPtr = (uint8_t *)outputPixels;
-
-    jint *intermediatepixels=(int *)malloc(sizeof(int)*width*height);
-    int *roatedpixels=(int *)malloc(sizeof(int)*width*height);
+    jint *intermediatepixels= (jint *)malloc(sizeof(int)*height*width);
 
     uint32_t *colorArr;
+    float sigma;
+    for(uint32_t y=0;y<height;y++){
+        for(uint32_t x=0;x<width;x=x+16){
+           // pixelFiller_neon(y,x,height,width,(uint32_t *)intermediatepixels,(uint32_t *)pixels,0);
+
+            sigma=sigmaCal_neon(y,sigma_far,sigma_near,a0,a1,a2,a3);
+            sigma=5*sigma;
+            if((y>=a1&&y<=a2)||sigma<0.6)
+                 pixelFiller_neon(y,x,height,width,(uint32_t *)intermediatepixels,(uint32_t *)pixels,0);
+            else{
+                colorArr= finalPixelCalc_neon(y,x,height,width,sigma_far,pixels,0);
+                pixelFiller_neon(y,x,height,width,(uint32_t *)intermediatepixels,colorArr,1);
+                free(colorArr);
+            }
+        }
+    }
 
     for(uint32_t y=0;y<height;y++){
         for(uint32_t x=0;x<width;x=x+16){
-            colorArr= intermediatePixelCalc_neon(y,x,height,width,sigma_far,pixels);
-            pixelFiller_neon(y,x,height,width,intermediatepixels,colorArr);
-
+           // pixelFiller_neon(y,x,height,width,(uint32_t *)outputPixels,(uint32_t *)pixels,0);
+            sigma=sigmaCal_neon(y,sigma_far,sigma_near,a0,a1,a2,a3);
+            sigma=5*sigma;
+            if((y>=a1&&y<=a2)||sigma<0.6)
+               pixelFiller_neon(y,x,height,width,(uint32_t *)outputPixels,(uint32_t *)pixels,0);
+            else{
+                colorArr= finalPixelCalc_neon(y,x,height,width,sigma_far,intermediatepixels,1);
+                pixelFiller_neon(y,x,height,width,(uint32_t *)outputPixels,colorArr,1);
+                free(colorArr);
+            }
         }
     }
 
-    rotateImage_neon(intermediatepixels,roatedpixels,height,width );
-
-    for(uint32_t y=0;y<width;y++){
-        for(uint32_t x=0;x<height;x=x+16){
-            colorArr= intermediatePixelCalc_neon(y,x,width,height,sigma_far,roatedpixels);
-            pixelFiller_neon(y,x,width,height,intermediatepixels,colorArr);
-
-        }
-    }
-
-    rotateImage_neon(intermediatepixels,(int *)outputPixels,width,height );
-
-
+    free(intermediatepixels);
     env->ReleaseIntArrayElements(inputPixels_, pixels, 0);
     env->ReleaseIntArrayElements(outputPixels_, outputPixels, 0);
     return 0;
+}
+
+float sigmaCal_neon(int y,float sigma_far,float sigma_near,int a0, int a1,int a2, int a3){
+    float sigma;
+    if(y<a0)
+        sigma=sigma_far;
+    else if(y>=a0&&y<a1)
+        sigma=sigma_far*((float)((a1-y)/(float)(a1-a0)));
+    else if(y>a2&&y<=a3)
+        sigma=sigma_near*((float)((y-a2)/(float)(a3-a2)));
+    else if(y>a3)
+        sigma=sigma_near;
+    return sigma;
 }
 
 
@@ -181,23 +204,23 @@ uint8x16x4_t vectorMulGk_neon(float Gk,uint8x16x4_t pixelChannels ){
     uint16x8_t Blow16 = vmovl_u8(Blow);
     uint16x8_t BHigh16 = vmovl_u8(BHigh);
 
-    Alow16 = vmulq_n_u16(Alow16,(uint16_t)(Gk*64));
-    AHigh16 = vmulq_n_u16(AHigh16,(uint16_t)(Gk*64));
-    Rlow16 = vmulq_n_u16(Rlow16,(uint16_t)(Gk*64));
-    RHigh16 = vmulq_n_u16(RHigh16,(uint16_t)(Gk*64));
-    Glow16 = vmulq_n_u16(Glow16,(uint16_t)(Gk*64));
-    GHigh16 = vmulq_n_u16(GHigh16,(uint16_t)(Gk*64));
-    Blow16 = vmulq_n_u16(Blow16,(uint16_t)(Gk*64));
-    BHigh16 = vmulq_n_u16(BHigh16,(uint16_t)(Gk*64));
+    Alow16 = vmulq_n_u16(Alow16,(uint16_t)(Gk*value));
+    AHigh16 = vmulq_n_u16(AHigh16,(uint16_t)(Gk*value));
+    Rlow16 = vmulq_n_u16(Rlow16,(uint16_t)(Gk*value));
+    RHigh16 = vmulq_n_u16(RHigh16,(uint16_t)(Gk*value));
+    Glow16 = vmulq_n_u16(Glow16,(uint16_t)(Gk*value));
+    GHigh16 = vmulq_n_u16(GHigh16,(uint16_t)(Gk*value));
+    Blow16 = vmulq_n_u16(Blow16,(uint16_t)(Gk*value));
+    BHigh16 = vmulq_n_u16(BHigh16,(uint16_t)(Gk*value));
 
-    Alow16 = vshrq_n_u16(Alow16,6);
-    AHigh16 = vshrq_n_u16(AHigh16,6);
-    Rlow16 = vshrq_n_u16(Rlow16,6);
-    RHigh16 = vshrq_n_u16(RHigh16,6);
-    Glow16 = vshrq_n_u16(Glow16,6);
-    GHigh16 = vshrq_n_u16(GHigh16,6);
-    Blow16 = vshrq_n_u16(Blow16,6);
-    BHigh16 = vshrq_n_u16(BHigh16,6);
+    Alow16 = vshrq_n_u16(Alow16,rightShift);
+    AHigh16 = vshrq_n_u16(AHigh16,rightShift);
+    Rlow16 = vshrq_n_u16(Rlow16,rightShift);
+    RHigh16 = vshrq_n_u16(RHigh16,rightShift);
+    Glow16 = vshrq_n_u16(Glow16,rightShift);
+    GHigh16 = vshrq_n_u16(GHigh16,rightShift);
+    Blow16 = vshrq_n_u16(Blow16,rightShift);
+    BHigh16 = vshrq_n_u16(BHigh16,rightShift);
 
     Alow = vqmovn_u16(Alow16);
     AHigh = vqmovn_u16(AHigh16);
@@ -221,27 +244,24 @@ uint8x16x4_t vectorMulGk_neon(float Gk,uint8x16x4_t pixelChannels ){
     return res;
 }
 
-uint32_t * finalPixelCalc_neon(int y, int x,int height, int width, float sigma,int *pixels){
-
-}
-
-uint32_t * intermediatePixelCalc_neon(int y, int x,int height, int width, float sigma,int *pixels){
+uint32_t * finalPixelCalc_neon(int y, int x,int height, int width, float sigma,int *temppixels,int flag){
     int r=(jint)std::ceil((double)2*sigma);
     uint8x16x4_t sum;
     memset((uint8_t *)&sum,0,64);
     uint32_t *colorArr = (uint32_t *)malloc(64);
-
+    uint8x16x4_t temp;
     for(int k=(-1*r);k<=r;k++){
-        uint8x16x4_t temp= vectorMulGk_neon(Gk_neon(k,sigma),vectorLoad_neon(y+k,x, height,width,pixels));
+        if(flag==0)
+            temp= vectorMulGk_neon(Gk_neon(k,sigma),vectorLoad_neon(y+k,x, height,width,temppixels));
+        else
+            temp= vectorMulGk_neon(Gk_neon(k,sigma),vectorLoad_neon(y,x+k, height,width,temppixels));
         for(int i=3;i>=0;i--){
             sum.val[i] = vaddq_u8(temp.val[i],sum.val[i]);
         }
     }
-
     vst4q_u8((uint8_t *)colorArr,sum);
     return colorArr;
 }
-
 
 uint8x16x4_t vectorLoad_neon(int y,int x,int height, int width,int *pixels){
 
@@ -266,28 +286,31 @@ uint8x16x4_t vectorLoad_neon(int y,int x,int height, int width,int *pixels){
     return pixelChannels;
 }
 
-void pixelFiller_neon(int y, int x, int height, int width,int *tempPixels,  uint32_t *colorArr){
-
+void pixelFiller_neon(int y, int x, int height, int width,uint32_t *tempPixels,  uint32_t *colorArr,int flag){
+    int index,i;
     if((width-x)<16){
         uint8_t len=width-x;
-        for(int i=0;i<len;i++){
-            tempPixels[y*width+x] = colorArr[i];
+        for(i=0;i<len;i++){
+            if(flag==1)
+                index=i;
+            else
+                index=y*width+x;
+            tempPixels[y*width+x] = colorArr[index];
             x++;
         }
     }
     else if( x <= (width-16)){
-        for(int i=0;i<16;i++){
-            tempPixels[y*width+x] = colorArr[i];
+        for(i=0;i<16;i++){
+            if(flag==1)
+                index=i;
+            else
+                index=y*width+x;
+            tempPixels[y*width+x] = colorArr[index];
             x++;
         }
     }
-    free(colorArr);
 }
 
-void rotateImage_neon(int *orginalImage,int *roatedImage,int height, int width ){
-    for(uint32_t y=0;y<height;y++){
-        for(uint32_t x=0;x<width;x++){
-            roatedImage[x*height+y] =orginalImage[y*width+x];
-        }
-    }
-}
+
+
+

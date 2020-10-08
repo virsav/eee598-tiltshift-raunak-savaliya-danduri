@@ -1,0 +1,7 @@
+Executable : C:\Users\shree\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\ninja.exe
+arguments : 
+-C
+D:\sem 3\msa\eee598-tiltshift-raunak-savaliya-danduri\app\.cxx\cmake\debug\x86_64
+native-lib
+jvmArgs : 
+
