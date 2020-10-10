@@ -121,8 +121,6 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftneonnative(
     float sigma;
     for(uint32_t y=0;y<height;y++){
         for(uint32_t x=0;x<width;x=x+16){
-           // pixelFiller_neon(y,x,height,width,(uint32_t *)intermediatepixels,(uint32_t *)pixels,0);
-
             sigma=sigmaCal_neon(y,sigma_far,sigma_near,a0,a1,a2,a3);
             sigma=5.0*sigma;
             if((y>=a1&&y<=a2)||sigma<0.6)
@@ -137,7 +135,6 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftneonnative(
 
     for(uint32_t y=0;y<height;y++){
         for(uint32_t x=0;x<width;x=x+16){
-           // pixelFiller_neon(y,x,height,width,(uint32_t *)outputPixels,(uint32_t *)pixels,0);
             sigma=sigmaCal_neon(y,sigma_far,sigma_near,a0,a1,a2,a3);
             sigma=5.0*sigma;
             if((y>=a1&&y<=a2)||sigma<0.6)
@@ -178,7 +175,6 @@ float Gk_neon(int k, float sigma){
 
 
 uint8x16x4_t vectorMulGk_neon(float Gk,uint8x16x4_t pixelChannels ){
-
     uint8x16x4_t res;
 
     uint8x16_t Avector = pixelChannels.val[3];
@@ -186,8 +182,6 @@ uint8x16x4_t vectorMulGk_neon(float Gk,uint8x16x4_t pixelChannels ){
     uint8x16_t Gvector = pixelChannels.val[1];
     uint8x16_t Bvector = pixelChannels.val[0];
 
-    uint8x8_t Alow = vget_low_u8(Avector);
-    uint8x8_t AHigh = vget_high_u8(Avector);
     uint8x8_t Rlow = vget_low_u8(Rvector);
     uint8x8_t RHigh = vget_high_u8(Rvector);
     uint8x8_t Glow = vget_low_u8(Gvector);
@@ -195,8 +189,6 @@ uint8x16x4_t vectorMulGk_neon(float Gk,uint8x16x4_t pixelChannels ){
     uint8x8_t Blow = vget_low_u8(Bvector);
     uint8x8_t BHigh = vget_high_u8(Bvector);
 
-    uint16x8_t Alow16 = vmovl_u8(Alow);
-    uint16x8_t AHigh16 = vmovl_u8(AHigh);
     uint16x8_t Rlow16 = vmovl_u8(Rlow);
     uint16x8_t RHigh16 = vmovl_u8(RHigh);
     uint16x8_t Glow16 = vmovl_u8(Glow);
@@ -204,17 +196,15 @@ uint8x16x4_t vectorMulGk_neon(float Gk,uint8x16x4_t pixelChannels ){
     uint16x8_t Blow16 = vmovl_u8(Blow);
     uint16x8_t BHigh16 = vmovl_u8(BHigh);
 
-    Alow16 = vmulq_n_u16(Alow16,(uint16_t)(Gk*value));
-    AHigh16 = vmulq_n_u16(AHigh16,(uint16_t)(Gk*value));
-    Rlow16 = vmulq_n_u16(Rlow16,(uint16_t)(Gk*value));
-    RHigh16 = vmulq_n_u16(RHigh16,(uint16_t)(Gk*value));
-    Glow16 = vmulq_n_u16(Glow16,(uint16_t)(Gk*value));
-    GHigh16 = vmulq_n_u16(GHigh16,(uint16_t)(Gk*value));
-    Blow16 = vmulq_n_u16(Blow16,(uint16_t)(Gk*value));
-    BHigh16 = vmulq_n_u16(BHigh16,(uint16_t)(Gk*value));
+    uint16_t computedVal=(uint16_t)(Gk*value);
 
-    Alow16 = vshrq_n_u16(Alow16,rightShift);
-    AHigh16 = vshrq_n_u16(AHigh16,rightShift);
+    Rlow16 = vmulq_n_u16(Rlow16,computedVal);
+    RHigh16 = vmulq_n_u16(RHigh16,computedVal);
+    Glow16 = vmulq_n_u16(Glow16,computedVal);
+    GHigh16 = vmulq_n_u16(GHigh16,computedVal);
+    Blow16 = vmulq_n_u16(Blow16,computedVal);
+    BHigh16 = vmulq_n_u16(BHigh16,computedVal);
+
     Rlow16 = vshrq_n_u16(Rlow16,rightShift);
     RHigh16 = vshrq_n_u16(RHigh16,rightShift);
     Glow16 = vshrq_n_u16(Glow16,rightShift);
@@ -222,8 +212,6 @@ uint8x16x4_t vectorMulGk_neon(float Gk,uint8x16x4_t pixelChannels ){
     Blow16 = vshrq_n_u16(Blow16,rightShift);
     BHigh16 = vshrq_n_u16(BHigh16,rightShift);
 
-    Alow = vqmovn_u16(Alow16);
-    AHigh = vqmovn_u16(AHigh16);
     Rlow = vqmovn_u16(Rlow16);
     RHigh = vqmovn_u16(RHigh16);
     Glow = vqmovn_u16(Glow16);
@@ -231,7 +219,7 @@ uint8x16x4_t vectorMulGk_neon(float Gk,uint8x16x4_t pixelChannels ){
     Blow = vqmovn_u16(Blow16);
     BHigh = vqmovn_u16(BHigh16);
 
-    uint8x16_t A = vcombine_u8(Alow,AHigh);
+    uint8x16_t A = Avector;
     uint8x16_t R = vcombine_u8(Rlow,RHigh);
     uint8x16_t G = vcombine_u8(Glow,GHigh);
     uint8x16_t B = vcombine_u8(Blow,BHigh);
@@ -255,10 +243,12 @@ uint32_t * finalPixelCalc_neon(int y, int x,int height, int width, float sigma,i
             temp= vectorMulGk_neon(Gk_neon(k,sigma),vectorLoad_neon(y+k,x, height,width,temppixels));
         else
             temp= vectorMulGk_neon(Gk_neon(k,sigma),vectorLoad_neon(y,x+k, height,width,temppixels));
-        for(int i=3;i>=0;i--){
-            sum.val[i] = vaddq_u8(temp.val[i],sum.val[i]);
+
+        for(int i=2;i>=0;i--){
+            sum.val[i]= vaddq_u8 (sum.val[i],temp.val[i]);
         }
     }
+    sum.val[3]=temp.val[3];
     vst4q_u8((uint8_t *)colorArr,sum);
     return colorArr;
 }
@@ -268,8 +258,19 @@ uint8x16x4_t vectorLoad_neon(int y,int x,int height, int width,int *pixels){
     uint8x16x4_t pixelChannels;
     uint8_t *emptyptr=(uint8_t *)malloc(64);
     memset(emptyptr,0,64);
-
     if(y<0||x<0||y>height||x>width){
+        if((x<0)&&(x+15>=0)&&(y<height)&&(y>=0)){
+            int temp=x;
+            uint32_t *ptr=(uint32_t *)emptyptr;
+            for(int i=0;i<16;i++){
+                if(temp>=0)
+                    ptr[i]=pixels[y*width+temp];
+                temp++;
+            }
+            pixelChannels=vld4q_u8(emptyptr);
+            free(emptyptr);
+            return pixelChannels;
+        }
         pixelChannels=vld4q_u8(emptyptr);
         free(emptyptr);
         return pixelChannels;
@@ -290,6 +291,7 @@ uint8x16x4_t vectorLoad_neon(int y,int x,int height, int width,int *pixels){
         free(emptyptr);
         return pixelChannels;
     }
+
 }
 
 
