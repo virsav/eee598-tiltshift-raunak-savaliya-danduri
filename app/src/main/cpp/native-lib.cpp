@@ -135,6 +135,7 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftneonnative(
 
     for(uint32_t y=0;y<height;y++){
         for(uint32_t x=0;x<width;x=x+16){
+            //pixelFiller_neon(y,x,height,width,(uint32_t *)outputPixels,(uint32_t *)pixels,0);
             sigma=sigmaCal_neon(y,sigma_far,sigma_near,a0,a1,a2,a3);
             sigma=5.0*sigma;
             if((y>=a1&&y<=a2)||sigma<0.6)
@@ -258,36 +259,37 @@ uint8x16x4_t vectorLoad_neon(int y,int x,int height, int width,int *pixels){
     uint8x16x4_t pixelChannels;
     uint8_t *emptyptr=(uint8_t *)malloc(64);
     memset(emptyptr,0,64);
-    if(y<0||x<0||y>height||x>width){
-        if((x<0)&&(x+15>=0)&&(y<height)&&(y>=0)){
-            int temp=x;
-            uint32_t *ptr=(uint32_t *)emptyptr;
-            for(int i=0;i<16;i++){
-                if(temp>=0)
-                    ptr[i]=pixels[y*width+temp];
-                temp++;
-            }
-            pixelChannels=vld4q_u8(emptyptr);
-            free(emptyptr);
-            return pixelChannels;
+    if((x<0&&((x+15)>=0))&&((y>=0)||(y<height))){
+        int temp=x;
+        uint32_t *ptr=(uint32_t *)emptyptr;
+        for(int i=0;i<16;i++){
+            if(temp>=0)
+                ptr[i]=pixels[y*width+temp];
+            temp++;
         }
         pixelChannels=vld4q_u8(emptyptr);
         free(emptyptr);
         return pixelChannels;
     }
-    else if((width-x)<16){
+    else if((x>=0&&((x+16)<width))&&((y>=0)||(y<height))){
         uint32_t *ptr=(uint32_t *)emptyptr;
-        uint8_t len=width-x;
-        for(int i=0;i<len;i++){
-            ptr[i]=pixels[y*width+x];
-            x++;
+        int temp=x;
+        for(int i=0;i<16;i++){
+            if(temp<width)
+                ptr[i]=pixels[y*width+temp];
+            temp++;
         }
         pixelChannels=vld4q_u8(emptyptr);
+        free(emptyptr);
+        return pixelChannels;
+    }
+    else if((x>=0||x<width)&&(y>=0||y<height)){
+        pixelChannels=vld4q_u8((uint8_t *)&pixels[y*width+x]);
         free(emptyptr);
         return pixelChannels;
     }
     else{
-        pixelChannels=vld4q_u8((uint8_t *)&pixels[y*width+x]);
+        pixelChannels=vld4q_u8(emptyptr);
         free(emptyptr);
         return pixelChannels;
     }
