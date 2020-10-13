@@ -1,6 +1,8 @@
 package edu.asu.ame.meteor.speedytiltshift2018;
 
 import android.graphics.Bitmap;
+import android.util.Log;
+
 //  This is the updated java code, the sigma values in java come out to be very low, hence the output image is not as good as in cpp.
 public class SpeedyTiltShift {
     static SpeedyTiltShift Singleton = new SpeedyTiltShift();
@@ -67,7 +69,13 @@ public class SpeedyTiltShift {
         }
         return sigma_one;
     }
+
+    public static long Java_time_measure = 0;
+    public static long CPP_time_measure = 0;
+    public static long Neon_time_measure = 0;
+
     public static Bitmap tiltshift_java(Bitmap input, float sigma_far, float sigma_near, int a0, int a1, int a2, int a3){
+        long Java_time_start = System.currentTimeMillis();
         Bitmap outBmp = Bitmap.createBitmap(input.getWidth(), input.getHeight(), Bitmap.Config.ARGB_8888);
         //cannot write to input Bitmap, since it may be immutable
         //if you try, you may get a java.lang.IllegalStateException
@@ -97,10 +105,16 @@ public class SpeedyTiltShift {
 
         outBmp.setPixels(pixelsOut,0,input.getWidth(),0,0,input.getWidth(),input.getHeight());
 
+        Log.d("Speedy_Tiltshift_JAVA", "hey");
+        long Java_time_end = System.currentTimeMillis();
+        Java_time_measure = Java_time_end - Java_time_start;
+
+
         return outBmp;
     }
 
     public static Bitmap tiltshift_cpp(Bitmap input, float sigma_far, float sigma_near, int a0, int a1, int a2, int a3){
+        long CPP_time_start = System.currentTimeMillis();
         Bitmap outBmp = Bitmap.createBitmap(input.getWidth(), input.getHeight(), Bitmap.Config.ARGB_8888);
         int[] pixels = new int[input.getHeight()*input.getWidth()];
         int[] pixelsOut = new int[input.getHeight()*input.getWidth()];
@@ -109,9 +123,13 @@ public class SpeedyTiltShift {
         tiltshiftcppnative(pixels,pixelsOut,input.getWidth(),input.getHeight(),sigma_far,sigma_near,a0,a1,a2,a3);
 
         outBmp.setPixels(pixelsOut,0,input.getWidth(),0,0,input.getWidth(),input.getHeight());
+        Log.d("Speedy_TiltShift_CPP","hey");
+        long CPP_time_end = System.currentTimeMillis();
+        CPP_time_measure = CPP_time_end - CPP_time_start;
         return outBmp;
     }
     public static Bitmap tiltshift_neon(Bitmap input, float sigma_far, float sigma_near, int a0, int a1, int a2, int a3){
+        long Neon_time_start = System.currentTimeMillis();
         Bitmap outBmp = Bitmap.createBitmap(input.getWidth(), input.getHeight(), Bitmap.Config.ARGB_8888);
         int[] pixels = new int[input.getHeight()*input.getWidth()];
         int[] pixelsOut = new int[input.getHeight()*input.getWidth()];
@@ -120,6 +138,9 @@ public class SpeedyTiltShift {
         tiltshiftneonnative(pixels,pixelsOut,input.getWidth(),input.getHeight(),sigma_far,sigma_near,a0,a1,a2,a3);
 
         outBmp.setPixels(pixelsOut,0,input.getWidth(),0,0,input.getWidth(),input.getHeight());
+        Log.d("SPeedy_Tiltshift_Neon","hey");
+        long Neon_time_end = System.currentTimeMillis();
+        Neon_time_measure = Neon_time_end-Neon_time_start;
         return outBmp;
     }
 

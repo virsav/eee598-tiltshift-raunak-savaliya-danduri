@@ -31,14 +31,26 @@ public class MainActivity extends AppCompatActivity {
     public void javaPress(View view){
         Bitmap outbmp = SpeedyTiltShift.tiltshift_java(bmp,s0f,s1f,(int)(a0f*bmp.getHeight()),(int)(a1f*bmp.getHeight()),(int)(a2f*bmp.getHeight()),(int)(a3f*bmp.getHeight()));
         imageView.setImageBitmap(outbmp);
+        long Java_time_measure = SpeedyTiltShift.Java_time_measure;
+        String time = "Java Measured Time (ms): "+Java_time_measure;
+        TextView view1 = (TextView) findViewById(R.id.textView);
+        view1.setText(time);
     }
     public void cppPress(View view){
         Bitmap outbmp = SpeedyTiltShift.tiltshift_cpp(bmp,s0f*5,s1f*5,(int)(a0f*bmp.getHeight()),(int)(a1f*bmp.getHeight()),(int)(a2f*bmp.getHeight()),(int)(a3f*bmp.getHeight()));
         imageView.setImageBitmap(outbmp);
+        long CPP_time_measure = SpeedyTiltShift.CPP_time_measure;
+        String time = "C++ Measured Time (ms): "+CPP_time_measure;
+        TextView view2 = (TextView) findViewById(R.id.textView2);
+        view2.setText(time);
     }
     public void neonPress(View view){
         Bitmap outbmp = SpeedyTiltShift.tiltshift_neon(bmp,s0f,s1f,(int)(a0f*bmp.getHeight()),(int)(a1f*bmp.getHeight()),(int)(a2f*bmp.getHeight()),(int)(a3f*bmp.getHeight()));
         imageView.setImageBitmap(outbmp);
+        long Neon_time_measure = SpeedyTiltShift.Neon_time_measure;
+        String time = "Neon Measured Time (ms): "+Neon_time_measure;
+        TextView view3 = (TextView) findViewById(R.id.textView3);
+        view3.setText(time);
     }
 
     private void setupImg(int imgId){

@@ -1,4 +1,4 @@
-D:/sem 3/msa/eee598-tiltshift-raunak-savaliya-danduri/app/.cxx/cmake/release/armeabi-v7a/CMakeFiles/cpufeatures.dir
-D:/sem 3/msa/eee598-tiltshift-raunak-savaliya-danduri/app/.cxx/cmake/release/armeabi-v7a/CMakeFiles/native-lib.dir
-D:/sem 3/msa/eee598-tiltshift-raunak-savaliya-danduri/app/.cxx/cmake/release/armeabi-v7a/CMakeFiles/edit_cache.dir
-D:/sem 3/msa/eee598-tiltshift-raunak-savaliya-danduri/app/.cxx/cmake/release/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+C:/Users/rauna/StudioProjects/eee598-tiltshift-raunak-savaliya-danduri/app/.cxx/cmake/release/armeabi-v7a/CMakeFiles/cpufeatures.dir
+C:/Users/rauna/StudioProjects/eee598-tiltshift-raunak-savaliya-danduri/app/.cxx/cmake/release/armeabi-v7a/CMakeFiles/native-lib.dir
+C:/Users/rauna/StudioProjects/eee598-tiltshift-raunak-savaliya-danduri/app/.cxx/cmake/release/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/rauna/StudioProjects/eee598-tiltshift-raunak-savaliya-danduri/app/.cxx/cmake/release/armeabi-v7a/CMakeFiles/rebuild_cache.dir

@@ -1,4 +1,4 @@
-# Install script for directory: D:/sem 3/msa/eee598-tiltshift-raunak-savaliya-danduri/app
+# Install script for directory: C:/Users/rauna/StudioProjects/eee598-tiltshift-raunak-savaliya-danduri/app
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "D:/sem 3/msa/eee598-tiltshift-raunak-savaliya-danduri/app/.cxx/cmake/release/armeabi-v7a/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/rauna/StudioProjects/eee598-tiltshift-raunak-savaliya-danduri/app/.cxx/cmake/release/armeabi-v7a/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
