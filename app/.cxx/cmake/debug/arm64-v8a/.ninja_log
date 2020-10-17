@@ -3,3 +3,5 @@
 383	652	624284540	libcpufeatures.a	10130380c6c13e92
 1	976	624284540	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	44ca57c1b3c06296
 977	1050	624284540	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so	fa8392737811525c
+6	887	624619605	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	44ca57c1b3c06296
+888	1114	624619606	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so	fa8392737811525c
