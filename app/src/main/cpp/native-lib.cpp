@@ -31,31 +31,35 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftcppnative(J
                                                                                jfloat sigma_near,
                                                                                jint a0, jint a1,
                                                                                jint a2, jint a3) {
-    jint *pixels = env->GetIntArrayElements(inputPixels_, NULL);
-    jint *outputPixels = env->GetIntArrayElements(outputPixels_, NULL);
-    jint *intermediatepixels= (jint *)malloc(sizeof(int)*height*width);
+    jint *pixels = env->GetIntArrayElements(inputPixels_, NULL);                              //get the input pixels
+    jint *outputPixels = env->GetIntArrayElements(outputPixels_, NULL);                       //get the outputpixels to store the result
+    jint *intermediatepixels= (jint *)malloc(sizeof(int)*height*width);                    //Allocate memory to intermediate pixels to store the intermediate result
     jint *temp1Arr=intermediatepixels,*temp2Arr=pixels;
 
     jfloat sigma=0;
+    //do the gaussian blur
     for(int times=0;times<2;times++){
         if(times==1){
             temp1Arr=outputPixels;temp2Arr=intermediatepixels;
         }
+        //loop for modifying each pixel value
         for (jint y=0;y<height;y++){
             for (jint x=0;x<width;x++) {
-                sigma=sigmacal(y,sigma_far,sigma_near,a0,a1,a2,a3);
-                if((y>=a1&&y<=a2)||sigma<0.6)
+                sigma=sigmacal(y,sigma_far,sigma_near,a0,a1,a2,a3);                                  // get the multiplied sigma value
+                if((y>=a1&&y<=a2)||sigma<0.6)                                                        // copy the same pixels if sigma is less than 0.6
                     temp1Arr[y*width+x]=pixels[y*width+x];
                 else
-                    temp1Arr[y*width+x]=finalPixelval(y,x,temp2Arr,height,width,sigma,times);
+                    temp1Arr[y*width+x]=finalPixelval(y,x,temp2Arr,height,width,sigma,times);        //calculate final value of the pixel
             }
         }
     }
-    free(intermediatepixels);
-    env->ReleaseIntArrayElements(inputPixels_, pixels, 0);
-    env->ReleaseIntArrayElements(outputPixels_, outputPixels, 0);
+    free(intermediatepixels);                                                                        // release memory of the intermediate pixel
+    env->ReleaseIntArrayElements(inputPixels_, pixels, 0);                                    // send the input pixel value
+    env->ReleaseIntArrayElements(outputPixels_, outputPixels, 0);                             // store and send the output pixel value
     return 0;
 }
+
+//function to calculate the new multiplied sigma value
 jfloat sigmacal(jint y,jfloat sigma_far,jfloat sigma_near,jint a0, jint a1,jint a2, jint a3){
     jfloat sigma;
     if(y<a0)
@@ -68,6 +72,8 @@ jfloat sigmacal(jint y,jfloat sigma_far,jfloat sigma_near,jint a0, jint a1,jint 
         sigma=sigma_near;
     return sigma;
 }
+
+//function to calculate the resultant pixel value
 jint finalPixelval(jint y, jint x,jint *pixels,jint height,jint width,jfloat sigma,jint flag){
     jint r,color=0,B=0,G=0,R=0,A=0xff,val=0,B_=0,G_=0,R_=0;
     r=(jint)std::ceil((double)2*sigma);
@@ -88,11 +94,15 @@ jint finalPixelval(jint y, jint x,jint *pixels,jint height,jint width,jfloat sig
     color = (A & 0xff) << 24 | (R_ & 0xff) << 16 | (G_ & 0xff) << 8 | (B_ & 0xff);
     return color;
 }
+
+//function to multiply the gaussian value to the pixel
 jfloat Gk(jint k, jfloat sigma){
     jfloat res,constant=(1/std::sqrt(2*3.14*std::pow(sigma,2)));
     res=constant*(std::exp(-1*(std::pow(k,2)/(2*std::pow(sigma,2)))));
     return  res;
 }
+
+//calculate the value of the pixel
 jint pixelval(jint y, jint x,jint* pixels,jint height,jint width){
     if(y>=height||x>=width||x<0||y<0)
         return 0;
@@ -115,10 +125,11 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftneonnative(
                                                                                 jint a2, jint a3) {
     jint *pixels = env->GetIntArrayElements(inputPixels_, NULL);
     jint *outputPixels = env->GetIntArrayElements(outputPixels_, NULL);
-    jint *intermediatepixels= (jint *)malloc(sizeof(int)*height*width);
+    jint *intermediatepixels= (jint *)malloc(sizeof(int)*height*width);                    //allocate memory for the intermediate pixel
 
     uint32_t *colorArr;
     float sigma;
+    //calculate the first part of weight vector approach and store the value in intermediate pixel
     for(uint32_t y=0;y<height;y++){
         for(uint32_t x=0;x<width;x=x+16){
             sigma=sigmaCal_neon(y,sigma_far,sigma_near,a0,a1,a2,a3);
@@ -132,7 +143,7 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftneonnative(
             }
         }
     }
-
+    //calculate the second part of the weight vector approach and store the value in final output pixel
     for(uint32_t y=0;y<height;y++){
         for(uint32_t x=0;x<width;x=x+16){
             //pixelFiller_neon(y,x,height,width,(uint32_t *)outputPixels,(uint32_t *)pixels,0);
@@ -148,12 +159,12 @@ Java_edu_asu_ame_meteor_speedytiltshift2018_SpeedyTiltShift_tiltshiftneonnative(
         }
     }
 
-    free(intermediatepixels);
-    env->ReleaseIntArrayElements(inputPixels_, pixels, 0);
-    env->ReleaseIntArrayElements(outputPixels_, outputPixels, 0);
+    free(intermediatepixels);                                                                        //release the memory for intermediate pixel
+    env->ReleaseIntArrayElements(inputPixels_, pixels, 0);                                    // send the input pixel value
+    env->ReleaseIntArrayElements(outputPixels_, outputPixels, 0);                             //store and send the output pixel value
     return 0;
 }
-
+//Function to calculate the new sigma value for the y-gradient
 float sigmaCal_neon(int y,float sigma_far,float sigma_near,int a0, int a1,int a2, int a3){
     float sigma;
     if(y<a0)
@@ -167,14 +178,14 @@ float sigmaCal_neon(int y,float sigma_far,float sigma_near,int a0, int a1,int a2
     return sigma;
 }
 
-
+//function to multiply the gaussian value to the pixel
 float Gk_neon(int k, float sigma){
     float res,constant=(1/std::sqrt(2*3.14*std::pow(sigma,2)));
     res=constant*(std::exp(-1*(std::pow(k,2)/(2*std::pow(sigma,2)))));
     return  res;
 }
 
-
+//Function to do the gaussian blur through neon
 uint8x16x4_t vectorMulGk_neon(float Gk,uint8x16x4_t pixelChannels ){
     uint8x16x4_t res;
 
@@ -233,6 +244,7 @@ uint8x16x4_t vectorMulGk_neon(float Gk,uint8x16x4_t pixelChannels ){
     return res;
 }
 
+//Function to calculate the value of the output pixel
 uint32_t * finalPixelCalc_neon(int y, int x,int height, int width, float sigma,int *temppixels,int flag){
     int r=(jint)std::ceil((double)2*sigma);
     uint8x16x4_t sum;
@@ -253,7 +265,7 @@ uint32_t * finalPixelCalc_neon(int y, int x,int height, int width, float sigma,i
     vst4q_u8((uint8_t *)colorArr,sum);
     return colorArr;
 }
-
+//Function to load the input pixels
 uint8x16x4_t vectorLoad_neon(int y,int x,int height, int width,int *pixels){
 
     uint8x16x4_t pixelChannels;
@@ -295,7 +307,6 @@ uint8x16x4_t vectorLoad_neon(int y,int x,int height, int width,int *pixels){
     }
 
 }
-
 
 void pixelFiller_neon(int y, int x, int height, int width,uint32_t *tempPixels,  uint32_t *colorArr,int flag){
     int index,i;
